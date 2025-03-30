@@ -1,10 +1,20 @@
 #!/bin/sh
 
-set -e
+set -e  # Exit immediately if a command fails
 
-echo "run db migration"
-source /app/app.env
+echo "Running DB migration"
+
+# Use `.` instead of `source` for POSIX compliance
+. /app/app.env
+
+# Ensure DB_SOURCE is not empty
+if [ -z "$DB_SOURCE" ]; then
+    echo "Error: DB_SOURCE is empty. Check your environment variables."
+    exit 1
+fi
+
+# Run database migration
 /app/migrate -path /app/migration -database "$DB_SOURCE" -verbose up
 
-echo "start the app"
+echo "Starting the app"
 exec "$@"
