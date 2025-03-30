@@ -14,7 +14,7 @@ if [ -z "$DB_SOURCE" ]; then
 fi
 
 # Run database migration
-/app/migrate -path /app/migration -database "$DB_SOURCE" -verbose up
+/app/migrate -path /app/db/migration -database "$DB_SOURCE" -verbose up
 
 echo "Starting the app"
 exec "$@"
