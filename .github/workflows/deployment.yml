@@ -6,13 +6,19 @@ on:
 
 jobs:
 
-  build:
+  deploy:
     name: Build image
     runs-on: ubuntu-latest
 
     steps:
     - name: check out code
       uses: actions/checkout@v2
+
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v4
+      with:
+        version: 'v1.31.0' 
+      id: install
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -34,5 +40,15 @@ jobs:
         REPOSITORY: simplebank
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-        docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+        docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:latest.
+        docker push -a $REGISTRY/$REPOSITORY
+
+    - name: Update kube config
+      run: aws update-kubeconfig --name simple-bank --region eu-north-1
+
+    - name: Deploy image to Amazon EKS
+      run: |
+        kubectl appy -f eks/aws-auth.yaml
+        kubectl appy -f eks/deployment.yaml
+        kubectl appy -f eks/service.yaml
+        kubectl appy -f eks/issuer.yaml
