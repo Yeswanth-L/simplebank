@@ -5,7 +5,7 @@ set -e  # Exit immediately if a command fails
 echo "Running DB migration"
 
 # Use `.` instead of `source` for POSIX compliance
-. /app/app.env
+. /app/app.env 
 
 # Ensure DB_SOURCE is not empty
 if [ -z "$DB_SOURCE" ]; then
