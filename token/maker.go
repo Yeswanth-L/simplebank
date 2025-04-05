@@ -6,7 +6,7 @@ import "time"
 //Any struct that implements both methods is considered to satisfy the Maker interface.
 type Maker interface {
 	//CreateToken - creates a token for the specified username & duration
-	CreateToken(username string, duration time.Duration) (string,error)
+	CreateToken(username string, duration time.Duration) (string,*Payload,error)
 
 	//VerifyToken - Checks if the tokem is valid or not
 	VerifyToken(token string) (*Payload,error)
